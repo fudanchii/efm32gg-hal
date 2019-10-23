@@ -1,18 +1,17 @@
 [package]
-name = "efm32gg-hal"
-version = "0.3.0"
-authors = ["chrysn <chrysn@fsfe.org>"]
+name = "efm32hg-hal"
+version = "0.1.0"
+authors = ["chrysn <chrysn@fsfe.org>", "Nurahmadie <nurahmadie@gmail.com>"]
 
 edition = "2018"
 
 categories = ["embedded", "no-std"]
-description = "HAL for the EFM32GG (EFM32 Giant Gecko) family of microcontrollers"
-keywords = ["arm", "cortex-m", "efm32", "efm32gg", "embedded-hal-impl"]
+description = "HAL for the EFM32HG (EFM32 Happy Gecko) family of microcontrollers"
+keywords = ["arm", "cortex-m", "efm32", "efm32hg", "embedded-hal-impl"]
 license = "MIT OR Apache-2.0"
 
 readme = "README.md"
-repository = "https://github.com/chrysn/efm32gg-hal"
-# documentation = "https://docs.rs/efm32gg-hal" # only to be advertised when actually useful
+repository = "https://github.com/fudanchii/efm32hg-hal"
 
 [dependencies]
 cortex-m = "0.5.2"
@@ -26,6 +25,9 @@ embedded-hal = { version = "0.2.0", features = ["unproven"] }
 # same and just have fewer pins wired); crates like efr32xg1 are already as
 # generic as they can be with svd2rust. having bobbin will hopefully make this
 # even smoother.
+#
+# efm32gg-hal implementation will be left as it is, but will not guaranteed to work,
+# efm32gg devices should use upstream repository instead: github.com/chrysn/efm32gg-hal
 
 efm32gg990 = { version = "0.1.2", optional = true }
 efr32xg1 = { version = "0.2.0", optional = true }
