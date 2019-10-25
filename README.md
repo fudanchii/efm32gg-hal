@@ -1,15 +1,15 @@
 `efm32hg-hal`
 -------------
 
-This is an implementation of the [embedded-hal] API for EFM32HG series of MCUs,
-and is based on [`efm32gg-hal`](https://github.com/chrysn/efm32gg-hal) implementation by @chrysn.
+This is an implementation of the [embedded-hal](https://github.com/rust-embedded/embedded-hal) API for EFM32HG series of MCUs,
+and is based on [`efm32gg-hal`](https://github.com/chrysn/efm32gg-hal) implementation.
 
 This will eventually merged back with `efm32gg-hal` into unified `em32-hal`,
 but until then, we will keep `efm32hg-hal` specific implementation separated in this repo.
 
 ### Usage
 
-[imtomu-rs]: https://github.com/fudanchii/imtomu-rs
+- [imtomu-rs](https://github.com/fudanchii/imtomu-rs)
 
 ### License
 
