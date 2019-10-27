@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! gpio {
     ([$(($pX_drive:ident, $pX_ctrl:ident),)+],
-     [$($PXi:ident: ($pxi:ident, $i:expr, $px_din:ident, $px_dout:ident, $modei:ident, $px_modehl:ident, $outclr:ident, $outset:ident),)+]) => {
+     [$($PXi:ident: ($pxi:ident, $i:expr, $px_din:ident, $px_dout:ident, $modei:ident, $px_modehl:ident, $outclr:ident, $outset:ident, $outtgl:ident),)+]) => {
 
         pub mod pins {
             use embedded_hal::digital::v2 as digital;
@@ -318,6 +318,17 @@ macro_rules! gpio {
 
                     fn is_set_high(self: &Self) -> Result<bool, Self::Error> {
                         self.is_set_low().map(|state| !state )
+                    }
+                }
+
+                #[cfg(feature = "unproven")]
+                impl<P> digital::ToggleableOutputPin for $PXi<Output<P>> {
+                    type Error = ();
+
+                    fn toggle(self: &mut Self) -> Result<(), Self::Error> {
+                        let gpio = sneak_into_gpio();
+                        unsafe { gpio.$outtgl.write(|w| w.bits(1 << $i)); }
+                        Ok(())
                     }
                 }
 
