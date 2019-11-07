@@ -22,6 +22,7 @@ pub mod gpio;
 #[cfg(feature = "chip-efr32xg1")]
 pub mod i2c;
 
+pub mod rtc;
 pub mod systick;
 pub mod timer;
 
