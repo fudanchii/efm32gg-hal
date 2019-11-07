@@ -25,6 +25,8 @@ pub mod i2c;
 pub mod systick;
 pub mod timer;
 
+pub mod watchdog;
+
 mod bitband;
 
 mod routing;
