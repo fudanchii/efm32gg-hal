@@ -1,6 +1,8 @@
 use registers::WDOG;
 use embedded_hal::watchdog;
 
+/// Our HAL struct for efm32's watchdog.
+/// Wrap WDOG struct from PAC so there's only 1 instance of watchdog.
 pub struct Watchdog {
     wdog: WDOG,
 }
@@ -10,6 +12,8 @@ pub trait WatchdogExt {
 }
 
 impl WatchdogExt for WDOG {
+    /// Constrain low level peripheral WDOG and expose higher level access
+    /// which implements embedded_hal's watchdog API.
     fn constrain(self) -> Watchdog {
         Watchdog { wdog: self }
     }
