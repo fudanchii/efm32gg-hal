@@ -50,6 +50,8 @@ pub struct Clocks {
     pub timer1: TIMER1Clk,
     #[cfg(feature = "_has_timer2")]
     pub timer2: TIMER2Clk,
+    pub acmp0: ACMP0Clk,
+    pub prs: PRSClk,
 }
 
 pub struct I2C0Clk {
@@ -105,9 +107,35 @@ impl GPIOClk {
         unsafe {
             let cmu = &*registers::CMU::ptr();
             #[cfg(any(feature = "chip-efm32gg", feature = "chip-efm32hg"))]
-            cmu.hfperclken0.modify(|_, w| w.gpio().bit(true));
+            cmu.hfperclken0.modify(|_, w| w.gpio().set_bit());
             #[cfg(feature = "chip-efr32xg1")]
-            cmu.hfbusclken0.modify(|_, w| w.gpio().bit(true));
+            cmu.hfbusclken0.modify(|_, w| w.gpio().set_bit());
+        }
+    }
+}
+
+pub struct ACMP0Clk {
+    _private: (),
+}
+
+impl ACMP0Clk {
+    pub fn enable(&mut self) {
+        unsafe {
+            let cmu = &*registers::CMU::ptr();
+            cmu.hfperclken0.modify(|_, w| w.acmp0().set_bit());
+        }
+    }
+}
+
+pub struct PRSClk {
+    _private: (),
+}
+
+impl PRSClk {
+    pub fn enable(&mut self) {
+        unsafe {
+            let cmu = &*registers::CMU::ptr();
+            cmu.hfperclken0.modify(|_, w| w.prs().set_bit());
         }
     }
 }
@@ -122,6 +150,8 @@ impl Cmu {
             timer1: TIMER1Clk { _private: () },
             #[cfg(feature = "_has_timer2")]
             timer2: TIMER2Clk { _private: () },
+            acmp0: ACMP0Clk { _private: () },
+            prs: PRSClk { _private: () },
         }
     }
 }
