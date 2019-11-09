@@ -51,12 +51,12 @@ impl RTC {
     /// Set RTC counter value (max: 0x00FFFFFF).
     pub fn set_counter(&mut self, value: u32) {
         let val = value.min(0x00FF_FFFF);
-        self.rtc.comp0.write(|w| unsafe { w.comp0().bits(val) });
+        self.rtc.cnt.write(|w| unsafe { w.cnt().bits(val) });
     }
 
     /// Read RTC counter value.
     pub fn read_counter(&self) -> u32 {
-        let value = self.rtc.comp0.read().bits();
+        let value = self.rtc.cnt.read().bits();
         value & 0x00FF_FFFF
     }
 
