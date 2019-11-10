@@ -1,7 +1,11 @@
 #[macro_export]
 macro_rules! gpio {
-    ([$(($pX_drive:ident, $pX_ctrl:ident),)+],
-     [$($PXi:ident: ($pxi:ident, $i:expr, $px_din:ident, $px_dout:ident, $modei:ident, $px_modehl:ident, $outclr:ident, $outset:ident, $outtgl:ident),)+]) => {
+    ({
+         port_configs: [$(($pX_drive:ident, $pX_ctrl:ident),)+],
+         pin_configs: [$($PXi:ident: ($pxi:ident, $i:expr, $px_din:ident, $px_dout:ident, $modei:ident, $px_modehl:ident),)+],
+         switches: [$($PXj:ident: ($outclr:ident, $outset:ident, $outtgl:ident),)+],
+         interrupts: [$($PXk:ident: ($pinsel:ident, $portsel:ident, $lhsel:ident),)+],
+     }) => {
 
         pub mod pins {
             use embedded_hal::digital::v2 as digital;
@@ -246,6 +250,56 @@ macro_rules! gpio {
 
                         $PXi { _mode: PhantomData }
                     }
+
+                    pub fn enable_interrupt(&mut self, edge: ExtInterruptEdge) {
+                        let gpio = sneak_into_gpio();
+                        gpio.$lhsel.modify(|_, w| w.$pinsel().$portsel());
+                        match edge {
+                            ExtInterruptEdge::Fall => {
+                                gpio.extifall.modify(|_, w| unsafe { w.extifall().bits(1 << $i) });
+                            },
+                            ExtInterruptEdge::Rise => {
+                                gpio.extirise.modify(|_, w| unsafe { w.extirise().bits(1 << $i) });
+                            },
+                            ExtInterruptEdge::Both => {
+                                gpio.extifall.modify(|_, w| unsafe { w.extifall().bits(1 << $i) });
+                                gpio.extirise.modify(|_, w| unsafe { w.extirise().bits(1 << $i) });
+                            }
+                        }
+                        gpio.ien.modify(|_, w| unsafe { w.ext().bits(1 << $i) });
+                    }
+
+                    pub fn disable_interrupt(&mut self, edge: ExtInterruptEdge) {
+                        let gpio = sneak_into_gpio();
+                        gpio.ien.modify(|r, w| unsafe {
+                            let current = r.bits();
+                            w.ext().bits(current & (!(1 << $i) & 0xffff))
+                        });
+                        match edge {
+                            ExtInterruptEdge::Fall => {
+                                gpio.extifall.modify(|r, w| unsafe {
+                                    let current = r.bits();
+                                    w.extifall().bits(current & (!(1 << $i) & 0xffff))
+                                });
+                            },
+                            ExtInterruptEdge::Rise => {
+                                gpio.extirise.modify(|r, w| unsafe {
+                                    let current = r.bits();
+                                    w.extirise().bits(current & (!(1 << $i) & 0xffff))
+                                });
+                            },
+                            ExtInterruptEdge::Both => {
+                                gpio.extifall.modify(|r, w| unsafe {
+                                    let current = r.bits();
+                                    w.extifall().bits(current & (!(1 << $i) & 0xffff))
+                                });
+                                gpio.extirise.modify(|r, w| unsafe {
+                                    let current = r.bits();
+                                    w.extirise().bits(current & (!(1 << $i) & 0xffff))
+                                });
+                            },
+                        }
+                    }
                 }
 
                 gpio_impl_from_trait! {
@@ -408,7 +462,7 @@ macro_rules! gpio {
             )+
         }
 
-        /// Parts has both pins and ports, but designed so only one or the ther
+        /// Parts has both pins and ports, but designed so only one or the other
         /// can be used. Its fields are private, and one field will be not available
         /// when the other is used/moved.
         pub struct Parts {
