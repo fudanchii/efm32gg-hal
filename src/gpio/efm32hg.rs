@@ -256,46 +256,46 @@ macro_rules! gpio {
                         gpio.$lhsel.modify(|_, w| w.$pinsel().$portsel());
                         match edge {
                             ExtInterruptEdge::Fall => {
-                                gpio.extifall.modify(|_, w| unsafe { w.extifall().bits(1 << $i) });
+                                gpio.extifall.modify(|_, w| unsafe { w.extifall().bits(1 << $i as u16) });
                             },
                             ExtInterruptEdge::Rise => {
-                                gpio.extirise.modify(|_, w| unsafe { w.extirise().bits(1 << $i) });
+                                gpio.extirise.modify(|_, w| unsafe { w.extirise().bits(1 << $i as u16) });
                             },
                             ExtInterruptEdge::Both => {
-                                gpio.extifall.modify(|_, w| unsafe { w.extifall().bits(1 << $i) });
-                                gpio.extirise.modify(|_, w| unsafe { w.extirise().bits(1 << $i) });
+                                gpio.extifall.modify(|_, w| unsafe { w.extifall().bits(1 << $i as u16) });
+                                gpio.extirise.modify(|_, w| unsafe { w.extirise().bits(1 << $i as u16) });
                             }
                         }
-                        gpio.ien.modify(|_, w| unsafe { w.ext().bits(1 << $i) });
+                        gpio.ien.modify(|_, w| unsafe { w.ext().bits(1 << $i as u16) });
                     }
 
                     pub fn disable_interrupt(&mut self, edge: ExtInterruptEdge) {
                         let gpio = sneak_into_gpio();
                         gpio.ien.modify(|r, w| unsafe {
-                            let current = r.bits();
-                            w.ext().bits(current & (!(1 << $i) & 0xffff))
+                            let current = r.bits() as u16;
+                            w.ext().bits(current & (!(1 << $i) & 0xffffu16))
                         });
                         match edge {
                             ExtInterruptEdge::Fall => {
                                 gpio.extifall.modify(|r, w| unsafe {
-                                    let current = r.bits();
-                                    w.extifall().bits(current & (!(1 << $i) & 0xffff))
+                                    let current = r.bits() as u16;
+                                    w.extifall().bits(current & (!(1 << $i) & 0xffffu16))
                                 });
                             },
                             ExtInterruptEdge::Rise => {
                                 gpio.extirise.modify(|r, w| unsafe {
-                                    let current = r.bits();
-                                    w.extirise().bits(current & (!(1 << $i) & 0xffff))
+                                    let current = r.bits() as u16;
+                                    w.extirise().bits(current & (!(1 << $i) & 0xffffu16))
                                 });
                             },
                             ExtInterruptEdge::Both => {
                                 gpio.extifall.modify(|r, w| unsafe {
-                                    let current = r.bits();
-                                    w.extifall().bits(current & (!(1 << $i) & 0xffff))
+                                    let current = r.bits() as u16;
+                                    w.extifall().bits(current & (!(1 << $i) & 0xffffu16))
                                 });
                                 gpio.extirise.modify(|r, w| unsafe {
-                                    let current = r.bits();
-                                    w.extirise().bits(current & (!(1 << $i) & 0xffff))
+                                    let current = r.bits() as u16;
+                                    w.extirise().bits(current & (!(1 << $i) & 0xffffu16))
                                 });
                             },
                         }
