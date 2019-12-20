@@ -14,7 +14,7 @@ readme = "README.md"
 repository = "https://github.com/fudanchii/efm32hg-hal"
 
 [dependencies]
-cortex-m = "0.5.2"
+cortex-m = "^0.6.1"
 
 # version is a wild guess.
 embedded-hal = "0.2.0"
