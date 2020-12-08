@@ -78,3 +78,9 @@ pub type WiredAnd<MODE, STATE> = OpenDrain<MODE, STATE>;
 
 pub struct Normal;
 pub struct Alternate;
+
+pub enum ExtInterruptEdge {
+    Fall,
+    Rise,
+    Both,
+}
